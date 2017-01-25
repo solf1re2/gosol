@@ -1,0 +1,4 @@
+using cobra package to make cli functions for starting etc.
+intended result is to do server run to start the server.
+
+should read in any config files in the main, then execute running the server and listening.
