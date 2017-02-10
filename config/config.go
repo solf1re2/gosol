@@ -11,7 +11,7 @@ type Configuration struct {
 }
 
 type serverConfig struct {
-	Port int    `json:"port"`
+	Port string `json:"port"`
 	Name string `json:"name"`
 }
 

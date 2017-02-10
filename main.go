@@ -17,6 +17,8 @@ package main
 import (
 	"fmt"
 
+	"net/http"
+
 	"github.com/solf1re2/gosol/cmd"
 	"github.com/solf1re2/gosol/config"
 )
@@ -24,5 +26,11 @@ import (
 func main() {
 	config := config.LoadConfig("./config.json")
 	fmt.Printf("Server port :%v\n", config.Server.Port)
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":"+config.Server.Port, nil)
 	cmd.Execute()
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
