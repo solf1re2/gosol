@@ -17,12 +17,23 @@ package main
 import (
 	"fmt"
 
+<<<<<<< HEAD
 	"github.com/solf1re2/config"
+=======
+	"net/http"
+
+>>>>>>> 10161e626039dbd3284b15cc2ec29d8c97f495ff
 	"github.com/solf1re2/gosol/cmd"
 )
 
 func main() {
 	config := config.LoadConfig("./config.json")
 	fmt.Printf("Server port :%v\n", config.Server.Port)
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":"+config.Server.Port, nil)
 	cmd.Execute()
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
