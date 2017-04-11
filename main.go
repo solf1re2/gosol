@@ -17,12 +17,9 @@ package main
 import (
 	"fmt"
 
-<<<<<<< HEAD
-	"github.com/solf1re2/config"
-=======
 	"net/http"
 
->>>>>>> 10161e626039dbd3284b15cc2ec29d8c97f495ff
+	"github.com/solf1re2/config"
 	"github.com/solf1re2/gosol/cmd"
 )
 
