@@ -17,8 +17,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/solf1re2/config"
 	"github.com/solf1re2/gosol/cmd"
-	"github.com/solf1re2/gosol/config"
 )
 
 func main() {
