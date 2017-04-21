@@ -24,10 +24,10 @@ import (
 )
 
 func main() {
-	config := config.LoadConfig("./config.json")
-	fmt.Printf("Server port :%v\n", config.Server.Port)
+	cfg := config.LoadConfig("./config.json")
+	fmt.Printf("Server port :%v\n", cfg.Server.Port)
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":"+config.Server.Port, nil)
+	http.ListenAndServe(":"+cfg.Server.Port, nil)
 	cmd.Execute()
 }
 
