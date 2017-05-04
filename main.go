@@ -16,21 +16,44 @@ package main
 
 import (
 	"fmt"
-
 	"net/http"
+	"os"
+
+	"github.com/gorilla/mux"
 
 	"github.com/solf1re2/config"
 	"github.com/solf1re2/gosol/cmd"
 )
 
 func main() {
+	// Load the config file - PORT,
 	cfg := config.LoadConfig("./config.json")
+
+	rtr := mux.NewRouter()
+	rtr.HandleFunc("/pages/{id:[0-9]+}", pageHandler)
+	rtr.HandleFunc("/homepage", pageHandler)
+	rtr.HandleFunc("/contact", pageHandler)
+
 	fmt.Printf("Server port :%v\n", cfg.Server.Port)
-	http.HandleFunc("/", handler)
+
+	http.Handle("/", rtr)
+
 	http.ListenAndServe(":"+cfg.Server.Port, nil)
 	cmd.Execute()
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+}
+
+func pageHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	pageID := vars["id"]
+	fileName := "files/" + pageID + ".html"
+	_, err := os.Stat(fileName)
+	if err != nil {
+		fileName = "files/404.html"
+	}
+
+	http.ServeFile(w, r, fileName)
 }
