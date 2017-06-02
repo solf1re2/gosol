@@ -31,8 +31,8 @@ func main() {
 
 	rtr := mux.NewRouter()
 	rtr.HandleFunc("/pages/{id:[0-9]+}", pageHandler)
-	rtr.HandleFunc("/homepage", pageHandler)
-	rtr.HandleFunc("/contact", pageHandler)
+	//rtr.HandleFunc("/homepage", pageHandler)
+	//rtr.HandleFunc("/contact", pageHandler)
 
 	fmt.Printf("Server port :%v\n", cfg.Server.Port)
 
