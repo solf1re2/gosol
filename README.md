@@ -22,3 +22,5 @@ CREATE TABLE `pages` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 INSERT INTO `pages` (`id`, `page_guid`, `page_title`, `page_content`, `page_date`) VALUES (NULL, 'hello-world', 'Hello, World', 'I\'m so glad you found this page!  It\'s been sitting patiently on the Internet for some time, just waiting for a visitor.', CURRENT_TIMESTAMP);
+
+INSERT INTO `pages` (`id`, `page_guid`, `page_title`, `page_content`, `page_date`) VALUES (3, 'lorem-ipsum', 'Lorem Ipsum', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer auctor diam eget ornare elementum. Fusce sed lacinia libero. In consectetur augue non quam sollicitudin, at elementum neque tristique. Vestibulum consectetur vel lectus ac consectetur. Integer a risus et urna ornare semper ut id nisl.', CURRENT_TIMESTAMP);

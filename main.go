@@ -22,6 +22,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/solf1re2/config"
 	"github.com/solf1re2/gosol/cmd"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -38,9 +39,11 @@ const (
 var database *sql.DB
 
 type Page struct {
-	Title   string
-	Content string
-	Date    string
+	Title      string
+	RawContent string
+	Content    template.HTML
+	Date       string
+	GUID       string
 }
 
 func main() {
@@ -57,10 +60,21 @@ func main() {
 	database = db
 
 	rtr := mux.NewRouter()
-	rtr.HandleFunc("/pages/{id:[0-9]+}", pageHandler)
+	//rtr.HandleFunc("/pages/{id:[0-9]+}", pageHandler)
 	//rtr.HandleFunc("/homepage", pageHandler)
 	//rtr.HandleFunc("/contact", pageHandler)
-	rtr.HandleFunc("/page/{id:[0-9]+}", ServePage)
+	//rtr.HandleFunc("/page/{id:[0-9]+}", ServePage)
+
+	rtr.HandleFunc("/api/pages", APIPage).
+		Methods("GET").
+		Schemes("https")
+	rtr.HandleFunc("/api/pages/{guid:[0-9a-zA\\-]+}", APIPage).
+		Methods("GET").
+		Schemes("https")
+
+	rtr.HandleFunc("/page/{guid:[0-9a-zA\\-]+}", ServePage)
+	rtr.HandleFunc("/", RedirIndex)
+	rtr.HandleFunc("/home", ServeIndex)
 
 	fmt.Printf("Server port :%v\n", cfg.Server.Port)
 
@@ -68,6 +82,27 @@ func main() {
 
 	http.ListenAndServe(":"+cfg.Server.Port, nil)
 	cmd.Execute()
+}
+
+func RedirIndex(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/home", 301)
+}
+
+func ServeIndex(w http.ResponseWriter, r *http.Request) {
+	var Pages = []Page{}
+	pages, err := database.Query("SELECT page_title, page_content,page_date,page_guid FROM pages ORDER BY ? DESC", "page_date")
+	if err != nil {
+		fmt.Fprintln(w, err.Error())
+	}
+	defer pages.Close()
+	for pages.Next() {
+		thisPage := Page{}
+		pages.Scan(&thisPage.Title, &thisPage.RawContent, &thisPage.Date, &thisPage.GUID)
+		thisPage.Content = template.HTML(thisPage.RawContent)
+		Pages = append(Pages, thisPage)
+	}
+	t, _ := template.ParseFiles("templates/index.html")
+	t.Execute(w, Pages)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -86,16 +121,39 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, fileName)
 }
 
+func APIPage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	pageGUID := vars["guid"]
+	thisPage := Page{}
+	fmt.Println(pageGUID)
+}
+
 func ServePage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	pageID := vars["id"]
+	pageGUID := vars["guid"]
 	thisPage := Page{}
-	fmt.Println(pageID)
-	err := database.QueryRow("SELECT page_title, page_content,page_date FROM pages WHERE id=?", pageID).Scan(&thisPage.Title, &thisPage.Content, &thisPage.Date)
+	fmt.Println(pageGUID)
+	err := database.QueryRow("SELECT page_title, page_content,page_date FROM pages WHERE page_guid=?", pageGUID).Scan(&thisPage.Title, &thisPage.RawContent, &thisPage.Date)
+	thisPage.Content = template.HTML(thisPage.RawContent)
 	if err != nil {
-		log.Println("Couldn't get the page: " + pageID)
+		http.Error(w, http.StatusText(404), http.StatusNotFound)
+		log.Println("Couldn't get the page: " + pageGUID)
 		log.Println(err.Error)
+		return
 	}
-	html := `<html><head><title>` + thisPage.Title + `</title></head><body><h1>` + thisPage.Title + `</h1><div>` + thisPage.Content + `</div></body></html>`
-	fmt.Fprintln(w, html)
+	//html := `<html><head><title>` + thisPage.Title + `</title></head><body><h1>` + thisPage.Title + `</h1><div>` + thisPage.Content + `</div></body></html>`
+	//fmt.Fprintln(w, html)
+	t, _ := template.ParseFiles("templates/blog.html")
+	t.Execute(w, thisPage)
+}
+
+func (p Page) TruncatedText() string {
+	chars := 0
+	for i, _ := range p.RawContent {
+		chars++
+		if chars > 150 {
+			return p.RawContent[:i] + `...`
+		}
+	}
+	return p.RawContent
 }
