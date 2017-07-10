@@ -18,14 +18,15 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
-	"github.com/solf1re2/config"
-	"github.com/solf1re2/gosol/cmd"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
+	"github.com/solf1re2/config"
+	"github.com/solf1re2/gosol/cmd"
 )
 
 const (
@@ -125,6 +126,7 @@ func APIPage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pageGUID := vars["guid"]
 	thisPage := Page{}
+	thisPage.GUID = pageGUID
 	fmt.Println(pageGUID)
 }
 
