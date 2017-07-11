@@ -2,6 +2,11 @@
 Go based web application attempting to write without using ready built frameworks.
 Structure based on common web app/framework structure.
 
+## TODO
+- Check on program start for valid db connection. If no connection, set one default router.
+
+# Project setup and coniguration
+
 ## useful docker commands for db
 docker run -p 3306:3306 --name gosol-mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:latest
 docker run -it --link gosol-mysqldb:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
