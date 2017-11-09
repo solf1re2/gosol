@@ -8,10 +8,12 @@ Structure based on common web app/framework structure.
 # Project setup and coniguration
 
 ## useful docker commands for db
+```
 docker run -p 3306:3306 --name gosol-mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:latest
 docker run -it --link gosol-mysqldb:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
-
+```
 ## sql commands
+```
 CREATE DATABASE cms;
 
 USE cms;
@@ -29,3 +31,4 @@ CREATE TABLE `pages` (
 INSERT INTO `pages` (`id`, `page_guid`, `page_title`, `page_content`, `page_date`) VALUES (NULL, 'hello-world', 'Hello, World', 'I\'m so glad you found this page!  It\'s been sitting patiently on the Internet for some time, just waiting for a visitor.', CURRENT_TIMESTAMP);
 
 INSERT INTO `pages` (`id`, `page_guid`, `page_title`, `page_content`, `page_date`) VALUES (3, 'lorem-ipsum', 'Lorem Ipsum', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer auctor diam eget ornare elementum. Fusce sed lacinia libero. In consectetur augue non quam sollicitudin, at elementum neque tristique. Vestibulum consectetur vel lectus ac consectetur. Integer a risus et urna ornare semper ut id nisl.', CURRENT_TIMESTAMP);
+```
